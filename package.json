@@ -1,0 +1,22 @@
+{
+  "name": "giggles-discord-bot",
+  "version": "1.0.0",
+  "description": "GigglesD - A Discord bot that welcomes new members using Supabase database",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "setup": "node setup.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "@supabase/supabase-js": "^2.39.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "keywords": ["discord", "bot", "supabase", "welcome"],
+  "author": "GigglesD Team",
+  "license": "MIT"
+} 
