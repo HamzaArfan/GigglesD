@@ -87,7 +87,7 @@ async function sendStaticAnnouncement(guild) {
             .setTimestamp();
 
         // Send the banner first so it appears as a stand-alone, full-width image
-        await announcementChannel.send({ embeds: [bannerEmbed] });
+        await announcementChannel.send( [bannerEmbed]);
 
         // Follow up with the text content in a separate message so it isn’t wrapped in the same container as the image
         await announcementChannel.send({ embeds: [textEmbed] });
@@ -177,7 +177,7 @@ async function sendStaticAnnouncement(guild) {
 
             try {
                 // Banner first – standalone image
-                await targetChannel.send({ embeds: [bannerEmbed] });
+                await targetChannel.send( [bannerEmbed]);
 
                 // Then the section details – separate container
                 await targetChannel.send({ embeds: [sectionEmbed] });
