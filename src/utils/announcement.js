@@ -57,28 +57,29 @@ async function sendStaticAnnouncement(guild) {
             })
         );
 
-        const purple = '🟣';
+        // Use actual bullet point instead of emoji
+        const bullet = '•';
 
         const embed = new EmbedBuilder()
             .setColor('#201679')
             .setTitle('Welcome to ACW — A Conversation Worldwide')
+            .setThumbnail(bannerUrl) // Changed from setImage to setThumbnail to show at top
             .setDescription(
                 [
-                    'ACW is designed for founders and creators who are actively developing and expanding their ideas. Whether you’re still figuring things out or already making moves, this is your space to get structure, guidance, and advice from people who are right where you are. Expect live events, free 1-on-1 consulting, networking, giveaways, and much more.',
+                    'ACW is designed for founders and creators who are actively developing and expanding their ideas. Whether you\'re still figuring things out or already making moves, this is your space to get structure, guidance, and advice from people who are right where you are. Expect live events, free 1-on-1 consulting, networking, giveaways, and much more.',
                     '',
-                    'This isn’t just another Discord server. **It’s a community** of people working on real things — some who are just getting started, some who are further ahead, and all supported by the ACW expert team. You’ll meet people building where you are, and others who’ve already faced the challenges you’re up against.',
+                    'This isn\'t just another Discord server. **It\'s a community** of people working on real things — some who are just getting started, some who are further ahead, and all supported by the ACW expert team. You\'ll meet people building where you are, and others who\'ve already faced the challenges you\'re up against.',
                     '',
-                    'Here’s how to dive in: Start connecting with people who are building just like you.',
-                    `${purple} Introduce yourself in ${resolved.introductions}`,
-                    `${purple} Head to ${resolved.whatIsAgenci} to meet **AgencI**, your AI co-founder`,
-                    `${purple} Join your city channel in ${resolved.byLocation}`,
-                    `${purple} Share what you’re working on in ${resolved.ideas}`,
-                    `${purple} Read the rules in ${resolved.rules}`,
+                    'Here\'s how to dive in: Start connecting with people who are building just like you.',
+                    `${bullet} Introduce yourself in ${resolved.introductions}`,
+                    `${bullet} Head to ${resolved.whatIsAgenci} to meet **AgencI**, your AI co-founder`,
+                    `${bullet} Join your city channel in ${resolved.byLocation}`,
+                    `${bullet} Share what you're working on in ${resolved.ideas}`,
+                    `${bullet} Read the rules in ${resolved.rules}`,
                     '',
                     '**This is a space for action.** Get in, get support, and start making things happen.'
                 ].join('\n')
             )
-            .setImage(bannerUrl)
             .setTimestamp();
 
         await announcementChannel.send({ embeds: [embed] });
@@ -95,32 +96,32 @@ async function sendStaticAnnouncement(guild) {
                     'AgencI is your AI co-founder. It helps you define your goals, break them into manageable tasks, prioritize what matters most, and keep momentum week after week. Whether you\'re building a pitch deck, outlining your launch plan, or figuring out where to focus, AgencI gives you structure and next steps tailored to where you are. It helps you plan, execute, and stay on track as you build your business.',
                     '',
                     'How it helps:',
-                    `${purple} Guides you through your journey, step-by-step, based on where you are`,
-                    `${purple} Helps you set goals, prioritize tasks, and avoid overwhelm`,
-                    `${purple} Offers direct, personalized support with clear next steps`,
-                    `${purple} Surfaces resources and tools relevant to your current stage`,
+                    `${bullet} Guides you through your journey, step-by-step, based on where you are`,
+                    `${bullet} Helps you set goals, prioritize tasks, and avoid overwhelm`,
+                    `${bullet} Offers direct, personalized support with clear next steps`,
+                    `${bullet} Surfaces resources and tools relevant to your current stage`,
                     '',
                     'Sign up here: https://agencibyacw.com/',
                     '',
                     `In the ${resolved.whatIsAgenci.replace('#', '')} channel you can:`,
-                    `${purple} Ask questions about using AgencI`,
-                    `${purple} Share what you’re building with it`,
-                    `${purple} Take a short journey quiz to figure out what stage you’re at and what to focus on next`
+                    `${bullet} Ask questions about using AgencI`,
+                    `${bullet} Share what you're building with it`,
+                    `${bullet} Take a short journey quiz to figure out what stage you're at and what to focus on next`
                 ]
             },
 
             // 2. ACW by Location
             {
                 channelKey: 'byLocation',
-                title: 'ACW by Location – Let’s Make It Local',
+                title: 'ACW by Location – Let\'s Make It Local',
                 bannerEnvVar: 'ANNOUNCEMENT_BANNER_URL_BY_LOCATION',
                 paragraphs: [
                     'This is where the global community gets personal.',
                     '',
                     'Find your region, meet others nearby, and:',
-                    `${purple} Collaborate with local founders`,
-                    `${purple} Attend IRL or virtual meetups`,
-                    `${purple} Share local resources, tools, and opportunities`,
+                    `${bullet} Collaborate with local founders`,
+                    `${bullet} Attend IRL or virtual meetups`,
+                    `${bullet} Share local resources, tools, and opportunities`,
                     'We currently only support New York and Chicago. #new-york #chicago'
                 ]
             },
@@ -131,14 +132,14 @@ async function sendStaticAnnouncement(guild) {
                 title: 'ACW Community Guidelines',
                 bannerEnvVar: 'ANNOUNCEMENT_BANNER_URL_RULES',
                 paragraphs: [
-                    'This is a professional space for people building and growing their ideas. Let’s keep it focused:',
-                    `${purple} Be respectful — No hate, harassment, or unnecessary negativity`,
-                    `${purple} No spam — Keep promo and links in the right channels`,
-                    `${purple} Stay focused — This space is for building, learning, and collaborating`,
-                    `${purple} Respect privacy — No DMs without permission; no screenshots or recordings`,
-                    `${purple} Contribute — This space is as strong as the people in it`,
+                    'This is a professional space for people building and growing their ideas. Let\'s keep it focused:',
+                    `${bullet} Be respectful — No hate, harassment, or unnecessary negativity`,
+                    `${bullet} No spam — Keep promo and links in the right channels`,
+                    `${bullet} Stay focused — This space is for building, learning, and collaborating`,
+                    `${bullet} Respect privacy — No DMs without permission; no screenshots or recordings`,
+                    `${bullet} Contribute — This space is as strong as the people in it`,
                     '',
-                    'We’ll take action if needed to protect the community and keep the space focused and supportive. Let’s keep it real.'
+                    'We\'ll take action if needed to protect the community and keep the space focused and supportive. Let\'s keep it real.'
                 ]
             }
         ];
@@ -159,8 +160,8 @@ async function sendStaticAnnouncement(guild) {
             const sectionEmbed = new EmbedBuilder()
                 .setColor('#201679')
                 .setTitle(item.title)
+                .setThumbnail(banner) // Changed from setImage to setThumbnail
                 .setDescription(item.paragraphs.join('\n'))
-                .setImage(banner)
                 .setTimestamp();
 
             try {
