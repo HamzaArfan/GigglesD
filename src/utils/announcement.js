@@ -15,7 +15,7 @@ async function sendStaticAnnouncement(guild) {
         const announcementChannel = guild.channels.cache.find(
             (ch) =>
                 ch.type === 0 && // text channel
-                ['announcement', 'announcements', 'announce', 'server-announce', 'news'].some((name) =>
+                ['about-agenci', 'about-acw', 'about-gigglesd'].some((name) =>
                     ch.name.toLowerCase().includes(name)
                 ) &&
                 ch.permissionsFor(guild.members.me)?.has(['ViewChannel', 'SendMessages'])
@@ -37,16 +37,18 @@ async function sendStaticAnnouncement(guild) {
         }
 
         // Build the announcement embed
-        const bannerUrl = process.env.ANNOUNCEMENT_BANNER_URL ||
-            'https://i.imgur.com/8rWCY4B.png'; // Fallback generic banner
+        // Use section-specific banner if provided, otherwise fall back to the legacy var or a default image
+        const bannerUrl = process.env.ANNOUNCEMENT_BANNER_URL_ABOUT ||
+            process.env.ANNOUNCEMENT_BANNER_URL ||
+            'https://i.imgur.com/8rWCY4B.png';
 
         // Determine channel mentions (or fall back to plain text if not found)
         const channelMap = {
-            introductions: 'introductions',
-            whatIsAgenci: 'what-is-agenci',
-            byLocation: 'how-acw-by-location-works',
-            ideas: 'ideas',
-            rules: 'rules'
+            introductions: 'introductions', // kept for bullet reference, no announcement sent
+            whatIsAgenci: 'agenci-help',
+            byLocation: 'acw-by-location',
+            ideas: 'ideas', // kept for bullet reference, no announcement sent
+            rules: 'server-rules'
         };
         const resolved = Object.fromEntries(
             Object.entries(channelMap).map(([key, name]) => {
@@ -55,7 +57,7 @@ async function sendStaticAnnouncement(guild) {
             })
         );
 
-        const purple = '🔹';
+        const purple = '🟣';
 
         const embed = new EmbedBuilder()
             .setColor('#201679')
@@ -64,16 +66,16 @@ async function sendStaticAnnouncement(guild) {
                 [
                     'ACW is designed for founders and creators who are actively developing and expanding their ideas. Whether you’re still figuring things out or already making moves, this is your space to get structure, guidance, and advice from people who are right where you are. Expect live events, free 1-on-1 consulting, networking, giveaways, and much more.',
                     '',
-                    'This isn’t just another Discord server. It’s a community of people working on real things — some who are just getting started, some who are further ahead, and **all supported by the ACW expert team**. You’ll meet people building where you are, and others who’ve already faced the challenges you’re up against.',
+                    'This isn’t just another Discord server. **It’s a community** of people working on real things — some who are just getting started, some who are further ahead, and all supported by the ACW expert team. You’ll meet people building where you are, and others who’ve already faced the challenges you’re up against.',
                     '',
-                    'Here’s how to dive in:',
+                    'Here’s how to dive in: Start connecting with people who are building just like you.',
                     `${purple} Introduce yourself in ${resolved.introductions}`,
                     `${purple} Head to ${resolved.whatIsAgenci} to meet **AgencI**, your AI co-founder`,
                     `${purple} Join your city channel in ${resolved.byLocation}`,
                     `${purple} Share what you’re working on in ${resolved.ideas}`,
                     `${purple} Read the rules in ${resolved.rules}`,
                     '',
-                    'This is a space for action. Get in, get support, and start making things happen!'
+                    '**This is a space for action.** Get in, get support, and start making things happen.'
                 ].join('\n')
             )
             .setImage(bannerUrl)
@@ -84,23 +86,11 @@ async function sendStaticAnnouncement(guild) {
 
         // ---- Additional per-channel announcements ----
         const perChannelContent = [
-            {
-                channelKey: 'rules',
-                title: 'ACW Community Guidelines',
-                paragraphs: [
-                    'This is a professional space for people building and growing their ideas. Let’s keep it focused:',
-                    `${purple} Be respectful — No hate, harassment, or unnecessary negativity`,
-                    `${purple} No spam — Keep promo and links in the right channels`,
-                    `${purple} Stay focused — This space is for building, learning, and collaborating`,
-                    `${purple} Respect privacy — No DMs without permission; no screenshots or recordings`,
-                    `${purple} Contribute — This space is as strong as the people in it`,
-                    '',
-                    'We’ll take action if needed to protect the community and keep the space focused and supportive. Let’s keep it real.'
-                ]
-            },
+            // 1. What is AgencI?
             {
                 channelKey: 'whatIsAgenci',
                 title: 'What is AgencI?',
+                bannerEnvVar: 'ANNOUNCEMENT_BANNER_URL_WHAT_IS_AGENCI',
                 paragraphs: [
                     'AgencI is your AI co-founder. It helps you define your goals, break them into manageable tasks, prioritize what matters most, and keep momentum week after week. Whether you\'re building a pitch deck, outlining your launch plan, or figuring out where to focus, AgencI gives you structure and next steps tailored to where you are. It helps you plan, execute, and stay on track as you build your business.',
                     '',
@@ -118,9 +108,12 @@ async function sendStaticAnnouncement(guild) {
                     `${purple} Take a short journey quiz to figure out what stage you’re at and what to focus on next`
                 ]
             },
+
+            // 2. ACW by Location
             {
                 channelKey: 'byLocation',
                 title: 'ACW by Location – Let’s Make It Local',
+                bannerEnvVar: 'ANNOUNCEMENT_BANNER_URL_BY_LOCATION',
                 paragraphs: [
                     'This is where the global community gets personal.',
                     '',
@@ -129,6 +122,23 @@ async function sendStaticAnnouncement(guild) {
                     `${purple} Attend IRL or virtual meetups`,
                     `${purple} Share local resources, tools, and opportunities`,
                     'We currently only support New York and Chicago. #new-york #chicago'
+                ]
+            },
+
+            // 3. Rules / Guidelines
+            {
+                channelKey: 'rules',
+                title: 'ACW Community Guidelines',
+                bannerEnvVar: 'ANNOUNCEMENT_BANNER_URL_RULES',
+                paragraphs: [
+                    'This is a professional space for people building and growing their ideas. Let’s keep it focused:',
+                    `${purple} Be respectful — No hate, harassment, or unnecessary negativity`,
+                    `${purple} No spam — Keep promo and links in the right channels`,
+                    `${purple} Stay focused — This space is for building, learning, and collaborating`,
+                    `${purple} Respect privacy — No DMs without permission; no screenshots or recordings`,
+                    `${purple} Contribute — This space is as strong as the people in it`,
+                    '',
+                    'We’ll take action if needed to protect the community and keep the space focused and supportive. Let’s keep it real.'
                 ]
             }
         ];
@@ -144,10 +154,13 @@ async function sendStaticAnnouncement(guild) {
                 continue;
             }
 
+            const banner = process.env[item.bannerEnvVar] || 'https://i.imgur.com/8rWCY4B.png';
+
             const sectionEmbed = new EmbedBuilder()
                 .setColor('#201679')
                 .setTitle(item.title)
                 .setDescription(item.paragraphs.join('\n'))
+                .setImage(banner)
                 .setTimestamp();
 
             try {
