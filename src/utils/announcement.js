@@ -41,27 +41,39 @@ async function sendStaticAnnouncement(guild) {
             'https://i.imgur.com/8rWCY4B.png'; // Fallback generic banner
 
         // Determine channel mentions (or fall back to plain text if not found)
-        const channelNames = ['test', 'test1', 'new-joiners'];
-        const channelMentions = channelNames.map((name) => {
-            const ch = guild.channels.cache.find((c) => c.type === 0 && c.name === name);
-            return ch ? `<#${ch.id}>` : `#${name}`;
-        });
-        const [testCh, test1Ch, newJoinersCh] = channelMentions;
+        const channelMap = {
+            introductions: 'introductions',
+            whatIsAgenci: 'what-is-agenci',
+            byLocation: 'how-acw-by-location-works',
+            ideas: 'ideas',
+            rules: 'rules'
+        };
+        const resolved = Object.fromEntries(
+            Object.entries(channelMap).map(([key, name]) => {
+                const ch = guild.channels.cache.find((c) => c.type === 0 && c.name === name);
+                return [key, ch ? `<#${ch.id}>` : `#${name}`];
+            })
+        );
+
+        const purple = '🔹';
 
         const embed = new EmbedBuilder()
-            .setColor('#FF0000') // red
-            .setTitle('About GigglesD')
+            .setColor('#201679')
+            .setTitle('Welcome to ACW — A Conversation Worldwide')
             .setDescription(
                 [
-                    'Welcome to **GigglesD** – your all-in-one community companion! 🎉 GigglesD powers smart onboarding, security and networking features that you can customise for any Discord server.',
+                    'ACW is designed for founders and creators who are actively developing and expanding their ideas. Whether you’re still figuring things out or already making moves, this is your space to get structure, guidance, and advice from people who are right where you are. Expect live events, free 1-on-1 consulting, networking, giveaways, and much more.',
                     '',
-                    'What can GigglesD do right now?',
-                    '• 🤖 **Personalised welcomes** – automatic, rich-embed greetings for new members',
-                    '• 🔒 **Link-edit protection** – deletes risky link edits and logs details to keep raids at bay',
-                    `• 💬 **Join us in ${newJoinersCh}** – meet other newcomers and get quick help`,
-                    `Useful channels: ${testCh}, ${test1Ch}, ${newJoinersCh}`,
+                    'This isn’t just another Discord server. It’s a community of people working on real things — some who are just getting started, some who are further ahead, and **all supported by the ACW expert team**. You’ll meet people building where you are, and others who’ve already faced the challenges you’re up against.',
                     '',
-                    'Learn more in **#docs** or ping the dev team if you have questions. Thanks for choosing GigglesD!'
+                    'Here’s how to dive in:',
+                    `${purple} Introduce yourself in ${resolved.introductions}`,
+                    `${purple} Head to ${resolved.whatIsAgenci} to meet **AgencI**, your AI co-founder`,
+                    `${purple} Join your city channel in ${resolved.byLocation}`,
+                    `${purple} Share what you’re working on in ${resolved.ideas}`,
+                    `${purple} Read the rules in ${resolved.rules}`,
+                    '',
+                    'This is a space for action. Get in, get support, and start making things happen!'
                 ].join('\n')
             )
             .setImage(bannerUrl)
@@ -69,9 +81,85 @@ async function sendStaticAnnouncement(guild) {
 
         await announcementChannel.send({ embeds: [embed] });
         console.log(`✅ Static announcement sent in ${guild.name} (#${announcementChannel.name})`);
+
+        // ---- Additional per-channel announcements ----
+        const perChannelContent = [
+            {
+                channelKey: 'rules',
+                title: 'ACW Community Guidelines',
+                paragraphs: [
+                    'This is a professional space for people building and growing their ideas. Let’s keep it focused:',
+                    `${purple} Be respectful — No hate, harassment, or unnecessary negativity`,
+                    `${purple} No spam — Keep promo and links in the right channels`,
+                    `${purple} Stay focused — This space is for building, learning, and collaborating`,
+                    `${purple} Respect privacy — No DMs without permission; no screenshots or recordings`,
+                    `${purple} Contribute — This space is as strong as the people in it`,
+                    '',
+                    'We’ll take action if needed to protect the community and keep the space focused and supportive. Let’s keep it real.'
+                ]
+            },
+            {
+                channelKey: 'whatIsAgenci',
+                title: 'What is AgencI?',
+                paragraphs: [
+                    'AgencI is your AI co-founder. It helps you define your goals, break them into manageable tasks, prioritize what matters most, and keep momentum week after week. Whether you\'re building a pitch deck, outlining your launch plan, or figuring out where to focus, AgencI gives you structure and next steps tailored to where you are. It helps you plan, execute, and stay on track as you build your business.',
+                    '',
+                    'How it helps:',
+                    `${purple} Guides you through your journey, step-by-step, based on where you are`,
+                    `${purple} Helps you set goals, prioritize tasks, and avoid overwhelm`,
+                    `${purple} Offers direct, personalized support with clear next steps`,
+                    `${purple} Surfaces resources and tools relevant to your current stage`,
+                    '',
+                    'Sign up here: https://agencibyacw.com/',
+                    '',
+                    `In the ${resolved.whatIsAgenci.replace('#', '')} channel you can:`,
+                    `${purple} Ask questions about using AgencI`,
+                    `${purple} Share what you’re building with it`,
+                    `${purple} Take a short journey quiz to figure out what stage you’re at and what to focus on next`
+                ]
+            },
+            {
+                channelKey: 'byLocation',
+                title: 'ACW by Location – Let’s Make It Local',
+                paragraphs: [
+                    'This is where the global community gets personal.',
+                    '',
+                    'Find your region, meet others nearby, and:',
+                    `${purple} Collaborate with local founders`,
+                    `${purple} Attend IRL or virtual meetups`,
+                    `${purple} Share local resources, tools, and opportunities`,
+                    'We currently only support New York and Chicago. #new-york #chicago'
+                ]
+            }
+        ];
+
+        for (const item of perChannelContent) {
+            const chName = channelMap[item.channelKey];
+            const targetChannel = guild.channels.cache.find((c) => c.type === 0 && c.name === chName);
+            if (!targetChannel) continue;
+
+            const recent = await targetChannel.messages.fetch({ limit: 20 });
+            const exists = recent.find((m) => m.author.id === guild.members.me.id && m.embeds?.[0]?.title === item.title);
+            if (exists) {
+                continue;
+            }
+
+            const sectionEmbed = new EmbedBuilder()
+                .setColor('#201679')
+                .setTitle(item.title)
+                .setDescription(item.paragraphs.join('\n'))
+                .setTimestamp();
+
+            try {
+                await targetChannel.send({ embeds: [sectionEmbed] });
+                console.log(`✅ Section announcement "${item.title}" sent in #${targetChannel.name}`);
+            } catch (err) {
+                console.log(`⚠️ Failed to send section embed in #${targetChannel?.name}:`, err.message);
+            }
+        }
     } catch (error) {
-        console.error(`❌ Failed to send static announcement in ${guild?.name}:`, error);
+        console.error('❌ Failed to send announcements in ' + (guild?.name || 'unknown guild') + ':', error);
     }
 }
 
-module.exports = sendStaticAnnouncement; 
+module.exports = sendStaticAnnouncement;
