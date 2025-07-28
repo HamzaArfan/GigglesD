@@ -42,19 +42,35 @@ async function sendStaticAnnouncement(guild) {
             process.env.ANNOUNCEMENT_BANNER_URL ||
             'https://i.imgur.com/8rWCY4B.png';
 
-        // Determine channel mentions (or fall back to plain text if not found)
+        // Map each logical key to either a channel ID or a channel name (used as fallback / lookup)
         const channelMap = {
-            introductions: 'introductions', // kept for bullet reference, no announcement sent
-            whatIsAgenci: 'what-is-agenci', // renamed channel
-            agenciHelp: 'agenci-help',      // new dedicated help channel
-            byLocation: 'acw-by-location',
-            ideas: 'ideas', // kept for bullet reference, no announcement sent
-            rules: 'rules' // renamed from server-rules
+            introductions: { id: '1397710401449230347', name: 'introductions' },
+            whatIsAgenci:   { id: '1394840198210261092', name: 'what-is-agenci' },
+            agenciHelp:     { id: '1395469596026339511', name: 'agenci-help' },
+            rules:          { id: '1394834581114458235', name: 'rules' },
+            byLocation:     { id: '1395474602255319070', name: 'acw-by-location' },
+            ideas:          { id: '1397710423792554196', name: 'ideas' }
         };
+
+        // Helper to get a channel by key (using ID if available, otherwise by name)
+        const getChannel = (key) => {
+            const spec = channelMap[key] || {};
+            let ch;
+            if (spec.id) {
+                ch = guild.channels.cache.get(spec.id);
+            }
+            if (!ch && spec.name) {
+                ch = guild.channels.cache.find((c) => c.type === 0 && c.name === spec.name);
+            }
+            return ch;
+        };
+
+        // Build resolved mention strings for bullets (fallbacks to plain text if channel missing)
         const resolved = Object.fromEntries(
-            Object.entries(channelMap).map(([key, name]) => {
-                const ch = guild.channels.cache.find((c) => c.type === 0 && c.name === name);
-                return [key, ch ? `<#${ch.id}>` : `#${name}`];
+            Object.keys(channelMap).map((key) => {
+                const ch = getChannel(key);
+                const fallback = channelMap[key].name ? `#${channelMap[key].name}` : `<#${channelMap[key].id}>`;
+                return [key, ch ? `<#${ch.id}>` : fallback];
             })
         );
 
@@ -169,7 +185,7 @@ async function sendStaticAnnouncement(guild) {
 
         for (const item of perChannelContent) {
             const chName = channelMap[item.channelKey];
-            const targetChannel = guild.channels.cache.find((c) => c.type === 0 && c.name === chName);
+            const targetChannel = getChannel(item.channelKey);
             if (!targetChannel) continue;
 
             const recent = await targetChannel.messages.fetch({ limit: 20 });
