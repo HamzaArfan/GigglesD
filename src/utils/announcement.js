@@ -45,10 +45,11 @@ async function sendStaticAnnouncement(guild) {
         // Determine channel mentions (or fall back to plain text if not found)
         const channelMap = {
             introductions: 'introductions', // kept for bullet reference, no announcement sent
-            whatIsAgenci: 'agenci-help',
+            whatIsAgenci: 'what-is-agenci', // renamed channel
+            agenciHelp: 'agenci-help',      // new dedicated help channel
             byLocation: 'acw-by-location',
             ideas: 'ideas', // kept for bullet reference, no announcement sent
-            rules: 'server-rules'
+            rules: 'rules' // renamed from server-rules
         };
         const resolved = Object.fromEntries(
             Object.entries(channelMap).map(([key, name]) => {
@@ -145,6 +146,23 @@ async function sendStaticAnnouncement(guild) {
                     `${bullet} Contribute — This space is as strong as the people in it`,
                     '',
                     'We\'ll take action if needed to protect the community and keep the space focused and supportive. Let\'s keep it real.'
+                ]
+            },
+
+            // 4. AgencI Help & Support
+            {
+                channelKey: 'agenciHelp',
+                title: 'AgencI Help & Support',
+                bannerEnvVar: 'ANNOUNCEMENT_BANNER_URL_AGENCI_HELP',
+                paragraphs: [
+                    'Have questions about using AgencI or need troubleshooting assistance? This is the place to get direct support from the team and fellow founders.',
+                    '',
+                    'In this channel you can:',
+                    `${bullet} Ask anything about AgencI features or workflow`,
+                    `${bullet} Share screenshots or examples of what you\'re building`,
+                    `${bullet} Get feedback and tips from the community`,
+                    '',
+                    'Please keep discussions focused on AgencI. For broader topics, visit other channels like #ideas or #acw-by-location.'
                 ]
             }
         ];
