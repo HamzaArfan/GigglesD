@@ -86,7 +86,11 @@ async function sendStaticAnnouncement(guild) {
             )
             .setTimestamp();
 
-        await announcementChannel.send({ embeds: [bannerEmbed, textEmbed] });
+        // Send the banner first so it appears as a stand-alone, full-width image
+        await announcementChannel.send({ embeds: [bannerEmbed] });
+
+        // Follow up with the text content in a separate message so it isn’t wrapped in the same container as the image
+        await announcementChannel.send({ embeds: [textEmbed] });
         console.log(`✅ Static announcement sent in ${guild.name} (#${announcementChannel.name})`);
 
         // ---- Additional per-channel announcements ----
@@ -172,7 +176,12 @@ async function sendStaticAnnouncement(guild) {
                 .setTimestamp();
 
             try {
-                await targetChannel.send({ embeds: [bannerEmbed, sectionEmbed] });
+                // Banner first – standalone image
+                await targetChannel.send({ embeds: [bannerEmbed] });
+
+                // Then the section details – separate container
+                await targetChannel.send({ embeds: [sectionEmbed] });
+
                 console.log(`✅ Section announcement "${item.title}" sent in #${targetChannel.name}`);
             } catch (err) {
                 console.log(`⚠️ Failed to send section embed in #${targetChannel?.name}:`, err.message);
