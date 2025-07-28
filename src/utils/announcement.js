@@ -60,10 +60,14 @@ async function sendStaticAnnouncement(guild) {
         // Use actual bullet point instead of emoji
         const bullet = '•';
 
-        const embed = new EmbedBuilder()
+        // Send banner image first
+        const bannerEmbed = new EmbedBuilder()
+            .setColor('#201679')
+            .setImage(bannerUrl);
+        
+        const textEmbed = new EmbedBuilder()
             .setColor('#201679')
             .setTitle('Welcome to ACW — A Conversation Worldwide')
-            .setThumbnail(bannerUrl) // Changed from setImage to setThumbnail to show at top
             .setDescription(
                 [
                     'ACW is designed for founders and creators who are actively developing and expanding their ideas. Whether you\'re still figuring things out or already making moves, this is your space to get structure, guidance, and advice from people who are right where you are. Expect live events, free 1-on-1 consulting, networking, giveaways, and much more.',
@@ -82,7 +86,7 @@ async function sendStaticAnnouncement(guild) {
             )
             .setTimestamp();
 
-        await announcementChannel.send({ embeds: [embed] });
+        await announcementChannel.send({ embeds: [bannerEmbed, textEmbed] });
         console.log(`✅ Static announcement sent in ${guild.name} (#${announcementChannel.name})`);
 
         // ---- Additional per-channel announcements ----
@@ -133,7 +137,7 @@ async function sendStaticAnnouncement(guild) {
                 bannerEnvVar: 'ANNOUNCEMENT_BANNER_URL_RULES',
                 paragraphs: [
                     'This is a professional space for people building and growing their ideas. Let\'s keep it focused:',
-                    `${bullet} Be respectful — No hate, harassment, or unnecessary negativity`,
+                    `${bullet} Be respectful — No hate, harassment, or unnecessary negativity`, 
                     `${bullet} No spam — Keep promo and links in the right channels`,
                     `${bullet} Stay focused — This space is for building, learning, and collaborating`,
                     `${bullet} Respect privacy — No DMs without permission; no screenshots or recordings`,
@@ -157,15 +161,18 @@ async function sendStaticAnnouncement(guild) {
 
             const banner = process.env[item.bannerEnvVar] || 'https://i.imgur.com/8rWCY4B.png';
 
+            const bannerEmbed = new EmbedBuilder()
+                .setColor('#201679')
+                .setImage(banner);
+
             const sectionEmbed = new EmbedBuilder()
                 .setColor('#201679')
                 .setTitle(item.title)
-                .setThumbnail(banner) // Changed from setImage to setThumbnail
                 .setDescription(item.paragraphs.join('\n'))
                 .setTimestamp();
 
             try {
-                await targetChannel.send({ embeds: [sectionEmbed] });
+                await targetChannel.send({ embeds: [bannerEmbed, sectionEmbed] });
                 console.log(`✅ Section announcement "${item.title}" sent in #${targetChannel.name}`);
             } catch (err) {
                 console.log(`⚠️ Failed to send section embed in #${targetChannel?.name}:`, err.message);
