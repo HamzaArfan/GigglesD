@@ -49,8 +49,35 @@ async function sendStaticAnnouncement(guild) {
             agenciHelp:     { id: '1395469596026339511', name: 'agenci-help' },
             rules:          { id: '1394834581114458235', name: 'rules' },
             byLocation:     { id: '1395474602255319070', name: 'acw-by-location' },
-            ideas:          { id: '1397710423792554196', name: 'ideas' }
+            ideas:          { id: '1397710423792554196', name: 'ideas' },
+
+            // Additional general channels
+            generalChat:    { id: '1394840946356650164', name: 'general-chat' },
+            businessColab:  { id: '1394842749563572234', name: 'business-colab' },
+            businessHelp:   { id: '1394841039218671766', name: 'business-help' }
         };
+
+        // City-specific channels used in the by-location section text
+        const cityChannelMap = {
+            newYork: { id: '1394841687746023444', name: 'new-york' },
+            chicago: { id: '1394841948715487322', name: 'chicago' }
+        };
+
+        const getCityChannel = (key) => {
+            const spec = cityChannelMap[key] || {};
+            let ch;
+            if (spec.id) ch = guild.channels.cache.get(spec.id);
+            if (!ch && spec.name) ch = guild.channels.cache.find((c) => c.type === 0 && c.name === spec.name);
+            return ch;
+        };
+
+        const resolvedCities = Object.fromEntries(
+            Object.keys(cityChannelMap).map((key) => {
+                const ch = getCityChannel(key);
+                const fallback = cityChannelMap[key].name ? `#${cityChannelMap[key].name}` : `<#${cityChannelMap[key].id}>`;
+                return [key, ch ? `<#${ch.id}>` : fallback];
+            })
+        );
 
         // Helper to get a channel by key (using ID if available, otherwise by name)
         const getChannel = (key) => {
@@ -144,7 +171,7 @@ async function sendStaticAnnouncement(guild) {
                     `${bullet} Collaborate with local founders`,
                     `${bullet} Attend IRL or virtual meetups`,
                     `${bullet} Share local resources, tools, and opportunities`,
-                    'We currently only support New York and Chicago. #new-york #chicago'
+                    `We currently only support New York and Chicago. ${resolvedCities.newYork} ${resolvedCities.chicago}`
                 ]
             },
 
