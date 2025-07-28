@@ -152,7 +152,7 @@ async function sendStaticAnnouncement(guild) {
                     '',
                     'Sign up here: https://agencibyacw.com/',
                     '',
-                    `In the ${resolved.whatIsAgenci.replace('#', '')} channel you can:`,
+                    `In the ${resolved.generalChat} channel you can:`,
                     `${bullet} Ask questions about using AgencI`,
                     `${bullet} Share what you're building with it`,
                     `${bullet} Take a short journey quiz to figure out what stage you're at and what to focus on next`
@@ -192,22 +192,7 @@ async function sendStaticAnnouncement(guild) {
                 ]
             },
 
-            // 4. AgencI Help & Support
-            {
-                channelKey: 'agenciHelp',
-                title: 'AgencI Help & Support',
-                bannerEnvVar: 'ANNOUNCEMENT_BANNER_URL_AGENCI_HELP',
-                paragraphs: [
-                    'Have questions about using AgencI or need troubleshooting assistance? This is the place to get direct support from the team and fellow founders.',
-                    '',
-                    'In this channel you can:',
-                    `${bullet} Ask anything about AgencI features or workflow`,
-                    `${bullet} Share screenshots or examples of what you\'re building`,
-                    `${bullet} Get feedback and tips from the community`,
-                    '',
-                    'Please keep discussions focused on AgencI. For broader topics, visit other channels like #ideas or #acw-by-location.'
-                ]
-            }
+
         ];
 
         for (const item of perChannelContent) {
