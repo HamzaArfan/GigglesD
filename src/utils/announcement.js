@@ -152,7 +152,7 @@ async function sendStaticAnnouncement(guild) {
                     '',
                     'Sign up here: https://agencibyacw.com/',
                     '',
-                    `In the ${resolved.generalChat} channel you can:`,
+                    `In the ${resolved.agenciHelp} channel you can:`,
                     `${bullet} Ask questions about using AgencI`,
                     `${bullet} Share what you're building with it`,
                     `${bullet} Take a short journey quiz to figure out what stage you're at and what to focus on next`

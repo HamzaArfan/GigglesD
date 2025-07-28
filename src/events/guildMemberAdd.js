@@ -85,34 +85,25 @@ async function guildMemberAdd(client, member) {
         console.log(`✅ Server welcome message sent for ${user.username} in ${guild.name}`);
 
         // Create DM welcome embed (personalized version)
-        const dmWelcomeEmbed = new EmbedBuilder()
-            .setColor('#7289DA')
-            .setTitle(`🎉 Welcome to ${guild.name}!`)
-            .setDescription(`Hi ${user.username}! Thanks for joining **${guild.name}**!`)
-            .setThumbnail(guild.iconURL({ dynamic: true, size: 256 }))
-            .addFields([
-                {
-                    name: '🏠 Server Info',
-                    value: `You're now member #${guild.memberCount} of ${guild.name}!`,
-                    inline: false
-                },
-                {
-                    name: '📋 Quick Tips',
-                    value: '• Check out the channels and say hello!\n• Read the server rules if available\n• Have fun and be respectful!',
-                    inline: false
-                }
-            ])
-            .setFooter({ 
-                text: guild.name, 
-                iconURL: guild.iconURL({ dynamic: true }) 
-            })
-            .setTimestamp();
+        // Send direct message to user with a personalized welcome text (no emojis or images)
+        const dmMessage = [
+            'We just wanted to thank you for joining our server.',
+            'We created this space to actually offer support that feels real, not surface-level stuff, but the kind of help that makes a difference when you’re building something from scratch or trying to figure out your next move.',
+            'ACW (A Conversation Worldwide) exists to make starting (and continuing) less lonely and more doable. That’s the heart of it.',
+            'Here’s what we promise to hold ourselves to:',
+            '• We’ll always be honest, not performative.',
+            '• We’ll keep things simple and clear.',
+            '• We’ll keep this a space where new conversations can thrive.',
+            'This server is a place to share progress, get feedback, meet others who get it, and just feel a little more seen in the process. No pressure to be perfect here.',
+            'We’re glad you’re with us.',
+            'If you ever need anything, just shoot a message.',
+            'Because anything is possible with the right support.',
+            '— The ACW Team'
+        ].join('\n\n');
 
         // Send direct message to user
         try {
-            await user.send({
-                embeds: [dmWelcomeEmbed]
-            });
+            await user.send(dmMessage);
             console.log(`✅ DM welcome message sent to ${user.username}`);
         } catch (dmError) {
             console.log(`⚠️ Could not send DM to ${user.username}: ${dmError.message}`);
