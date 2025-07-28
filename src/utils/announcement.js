@@ -15,7 +15,7 @@ async function sendStaticAnnouncement(guild) {
         const announcementChannel = guild.channels.cache.find(
             (ch) =>
                 ch.type === 0 && // text channel
-                ['about-agenci', 'about-acw', 'about-gigglesd'].some((name) =>
+                ['about'].some((name) =>
                     ch.name.toLowerCase().includes(name)
                 ) &&
                 ch.permissionsFor(guild.members.me)?.has(['ViewChannel', 'SendMessages'])
